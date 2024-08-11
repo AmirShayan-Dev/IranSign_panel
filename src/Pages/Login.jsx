@@ -1,8 +1,14 @@
 import React from "react";
 import "./Login.css";
 import { TextField, Box, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+function Login() {
+  const navigate = useNavigate();
+
+  const goToDashboard = () => {
+    navigate("/Dashboard");
+  };
   return (
     <div className="main-div">
       <Box display="flex" flexDirection="column" gap={2} alignItems="center">
@@ -13,10 +19,16 @@ export default function Login() {
           type="password"
           sx={{ width: "700px" }}
         />
-        <Button variant="contained" sx={{ width: "300px" }}>
+        <Button
+          variant="contained"
+          sx={{ width: "300px" }}
+          onClick={goToDashboard}
+        >
           ورود
         </Button>
       </Box>
     </div>
   );
 }
+
+export default Login;
