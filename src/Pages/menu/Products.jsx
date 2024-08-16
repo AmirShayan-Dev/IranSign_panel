@@ -16,9 +16,12 @@ export default function Products() {
   const goToCategory = () => {
     navigate("/Category");
   };
+  const goToDashboard = () => {
+    navigate("/Dashboard");
+  };
 
   const menuItems = [
-    { text: "داشبورد" },
+    { text: "داشبورد", action: goToDashboard },
     { text: "دسته بندی ها", action: goToCategory },
     { text: "محصولات" },
     { text: "مقالات" },
@@ -62,7 +65,7 @@ export default function Products() {
           textAlign: "right",
         }}
       >
-        <h1 style={{ fontSize: "1.rem" }}>محصولات </h1>{" "}
+        <h1 style={{ fontSize: "1rem" }}>محصولات </h1>{" "}
       </Box>
     </Box>
   );

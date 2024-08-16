@@ -16,11 +16,14 @@ export default function Category() {
   const goToDashboard = () => {
     navigate("/Dashboard");
   };
+  const goToProducts = () => {
+    navigate("/Products");
+  };
 
   const menuItems = [
     { text: "داشبورد", action: goToDashboard },
     { text: "دسته بندی ها" },
-    { text: "محصولات" },
+    { text: "محصولات", action: goToProducts },
     { text: "مقالات" },
   ];
 
