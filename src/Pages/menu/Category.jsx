@@ -8,18 +8,18 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 
-export default function Dashboard() {
+export default function Category() {
   const drawerWidth = 250;
 
   const navigate = useNavigate();
 
-  const goToCategory = () => {
-    navigate("/Category");
+  const goToDashboard = () => {
+    navigate("/Dashboard");
   };
 
   const menuItems = [
-    { text: "داشبورد" },
-    { text: "دسته بندی ها", action: goToCategory },
+    { text: "داشبورد", action: goToDashboard },
+    { text: "دسته بندی ها" },
     { text: "محصولات" },
     { text: "مقالات" },
   ];
@@ -62,7 +62,7 @@ export default function Dashboard() {
           textAlign: "right",
         }}
       >
-        <h1 style={{ fontSize: "1.rem" }}>خوش آمدید</h1>{" "}
+        <h1 style={{ fontSize: "1.2rem" }}>لیست دسته بندی ها </h1>{" "}
       </Box>
     </Box>
   );

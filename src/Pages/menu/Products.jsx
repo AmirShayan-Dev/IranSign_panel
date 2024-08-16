@@ -8,7 +8,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 
-export default function Dashboard() {
+export default function Products() {
   const drawerWidth = 250;
 
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ export default function Dashboard() {
           textAlign: "right",
         }}
       >
-        <h1 style={{ fontSize: "1.rem" }}>خوش آمدید</h1>{" "}
+        <h1 style={{ fontSize: "1.rem" }}>محصولات </h1>{" "}
       </Box>
     </Box>
   );
