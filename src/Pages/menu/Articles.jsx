@@ -8,19 +8,19 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 
-export default function Category() {
+export default function Articles() {
   const drawerWidth = 250;
 
   const navigate = useNavigate();
 
+  const goToCategory = () => {
+    navigate("/Category");
+  };
   const goToDashboard = () => {
     navigate("/Dashboard");
   };
   const goToProducts = () => {
     navigate("/Products");
-  };
-  const goToArticles = () => {
-    navigate("/Articles");
   };
   const goToUsers = () => {
     navigate("/Users");
@@ -28,9 +28,9 @@ export default function Category() {
 
   const menuItems = [
     { text: "داشبورد", action: goToDashboard },
-    { text: "دسته بندی ها" },
+    { text: "دسته بندی ها", action: goToCategory },
     { text: "محصولات", action: goToProducts },
-    { text: "مقالات", action: goToArticles },
+    { text: "مقالات" },
     { text: "کاربران", action: goToUsers },
   ];
 
@@ -72,7 +72,7 @@ export default function Category() {
           textAlign: "right",
         }}
       >
-        <h1 style={{ fontSize: "1.2rem" }}>لیست دسته بندی ها </h1>{" "}
+        <h1 style={{ fontSize: "1rem" }}>مقالات </h1>{" "}
       </Box>
     </Box>
   );

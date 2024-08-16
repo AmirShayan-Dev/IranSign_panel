@@ -19,12 +19,19 @@ export default function Products() {
   const goToDashboard = () => {
     navigate("/Dashboard");
   };
+  const goToArticles = () => {
+    navigate("/Articles");
+  };
+  const goToUsers = () => {
+    navigate("/Users");
+  };
 
   const menuItems = [
     { text: "داشبورد", action: goToDashboard },
     { text: "دسته بندی ها", action: goToCategory },
     { text: "محصولات" },
-    { text: "مقالات" },
+    { text: "مقالات", action: goToArticles },
+    { text: "کاربران", action: goToUsers },
   ];
 
   return (

@@ -19,12 +19,19 @@ export default function Dashboard() {
   const goToProducts = () => {
     navigate("/Products");
   };
+  const goToArticles = () => {
+    navigate("/Articles");
+  };
+  const goToUsers = () => {
+    navigate("/Users");
+  };
 
   const menuItems = [
     { text: "داشبورد" },
     { text: "دسته بندی ها", action: goToCategory },
     { text: "محصولات", action: goToProducts },
-    { text: "مقالات" },
+    { text: "مقالات", action: goToArticles },
+    { text: "کاربران", action: goToUsers },
   ];
 
   return (
@@ -65,7 +72,7 @@ export default function Dashboard() {
           textAlign: "right",
         }}
       >
-        <h1 style={{ fontSize: "1.rem" }}>خوش آمدید</h1>{" "}
+        <h1 style={{ fontSize: "1.3rem" }}>خوش آمدید</h1>{" "}
       </Box>
     </Box>
   );
