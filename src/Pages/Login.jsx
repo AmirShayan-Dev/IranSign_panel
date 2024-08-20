@@ -10,7 +10,18 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const validateEmail = (email) => {
+    // Regular expression for validating email
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const handleLogin = async () => {
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:8008/api/users/login",
@@ -21,8 +32,7 @@ function Login() {
       );
 
       if (response.status === 200) {
-        // Assume response contains a token or user info that you can use for authentication
-        // For example, you might store the token in localStorage
+        // Store token or user info here if needed
         // localStorage.setItem("token", response.data.token);
 
         // Navigate to the dashboard
@@ -42,6 +52,10 @@ function Login() {
           sx={{ width: "700px" }}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={!!error && !validateEmail(email)}
+          helperText={
+            !!error && !validateEmail(email) ? "Invalid email format" : ""
+          }
         />
         <TextField
           label="Password"
@@ -50,6 +64,12 @@ function Login() {
           sx={{ width: "700px" }}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          error={!!error && validateEmail(email) && !password}
+          helperText={
+            !!error && validateEmail(email) && !password
+              ? "Password is required"
+              : ""
+          }
         />
         {error && <div style={{ color: "red" }}>{error}</div>}
         <Button
