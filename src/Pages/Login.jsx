@@ -31,10 +31,6 @@ function Login() {
       );
 
       if (response.status === 200) {
-        // Store token or user info here if needed
-        // localStorage.setItem("token", response.data.token);
-
-        // Navigate to the dashboard
         navigate("/Dashboard");
       }
     } catch (err) {
