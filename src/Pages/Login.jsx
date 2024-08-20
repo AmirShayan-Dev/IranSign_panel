@@ -11,7 +11,6 @@ function Login() {
   const [error, setError] = useState("");
 
   const validateEmail = (email) => {
-    // Regular expression for validating email
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
