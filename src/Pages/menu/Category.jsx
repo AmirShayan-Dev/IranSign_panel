@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
@@ -49,6 +50,26 @@ export default function Category() {
   const goToCreateCategory = () => {
     navigate("/CreateCategory");
   };
+  const goToDashboard = () => {
+    navigate("/Dashboard");
+  };
+  const goToProducts = () => {
+    navigate("/Products");
+  };
+  const goToArticles = () => {
+    navigate("/Articles");
+  };
+  const goToUsers = () => {
+    navigate("/Users");
+  };
+
+  const menuItems = [
+    { text: "داشبورد", action: goToDashboard },
+    { text: "دسته بندی ها" },
+    { text: "محصولات", action: goToProducts },
+    { text: "مقالات", action: goToArticles },
+    { text: "کاربران", action: goToUsers },
+  ];
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -66,6 +87,16 @@ export default function Category() {
       >
         <Box sx={{ overflow: "auto" }}>
           <List>
+            {menuItems.map((item, index) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton onClick={item.action}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          {/* <List>
             <ListItemButton onClick={() => navigate("/Dashboard")}>
               <ListItemText primary="داشبورد" />
             </ListItemButton>
@@ -81,7 +112,7 @@ export default function Category() {
             <ListItemButton onClick={() => navigate("/Users")}>
               <ListItemText primary="کاربران" />
             </ListItemButton>
-          </List>
+          </List> */}
         </Box>
       </Drawer>
 
