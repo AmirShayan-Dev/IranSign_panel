@@ -1,5 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -7,31 +9,50 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Articles() {
   const drawerWidth = 250;
-
   const navigate = useNavigate();
+  const [articles, setArticles] = React.useState([]);
 
-  const goToCategory = () => {
-    navigate("/Category");
+  // Fetch articles on component mount
+  React.useEffect(() => {
+    axios
+      .get("http://localhost:8008/api/articles")
+      .then((response) => {
+        setArticles(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the articles!", error);
+      });
+  }, []);
+
+  const handleDelete = (id) => {
+    axios
+      .delete(`http://localhost:8008/api/article/${id}`)
+      .then(() => {
+        setArticles(articles.filter((article) => article.id !== id));
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the article!", error);
+      });
   };
-  const goToDashboard = () => {
-    navigate("/Dashboard");
+
+  const handleEdit = (id) => {
+    navigate(`/EditArticle/${id}`);
   };
-  const goToProducts = () => {
-    navigate("/Products");
-  };
-  const goToUsers = () => {
-    navigate("/Users");
+
+  const handleCreate = () => {
+    navigate("/CreateArticle");
   };
 
   const menuItems = [
-    { text: "داشبورد", action: goToDashboard },
-    { text: "دسته بندی ها", action: goToCategory },
-    { text: "محصولات", action: goToProducts },
+    { text: "داشبورد", action: () => navigate("/Dashboard") },
+    { text: "دسته بندی ها", action: () => navigate("/Category") },
+    { text: "محصولات", action: () => navigate("/Products") },
     { text: "مقالات" },
-    { text: "کاربران", action: goToUsers },
+    { text: "کاربران", action: () => navigate("/Users") },
   ];
 
   return (
@@ -50,7 +71,7 @@ export default function Articles() {
       >
         <Box sx={{ overflow: "auto" }}>
           <List>
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton onClick={item.action}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -64,15 +85,51 @@ export default function Articles() {
       <Box
         component="main"
         sx={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          p: 1,
-          marginRight: 35,
-          textAlign: "right",
+          flexGrow: 1,
+          p: 3,
+          marginRight: drawerWidth,
         }}
       >
-        <h1 style={{ fontSize: "1rem" }}>مقالات </h1>{" "}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreate}
+          sx={{ marginBottom: 2 }}
+        >
+          Make a New Article
+        </Button>
+        <Grid container spacing={2}>
+          {articles.map((article) => (
+            <Grid item xs={12} sm={6} md={4} key={article.id}>
+              <Box
+                sx={{
+                  border: "1px solid #ccc",
+                  borderRadius: 2,
+                  padding: 2,
+                  textAlign: "center",
+                }}
+              >
+                <h2>{article.name}</h2>
+                <p>{article.description}</p>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleEdit(article.id)}
+                  sx={{ marginRight: 1 }}
+                >
+                  Change
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => handleDelete(article.id)}
+                >
+                  Delete
+                </Button>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </Box>
   );

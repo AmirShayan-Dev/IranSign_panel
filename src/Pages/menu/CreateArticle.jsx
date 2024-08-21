@@ -1,0 +1,140 @@
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+export default function CreateArticle() {
+  const [name, setName] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [photoName, setPhotoName] = useState("");
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPhotoName(file.name);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!photo) {
+      setError("Please upload a photo.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("photo", photo);
+    formData.append("description", description);
+
+    axios
+      .post("http://localhost:8008/api/create_articles", formData)
+      .then(() => {
+        navigate("/articles");
+      })
+      .catch((error) => {
+        setError("There was an error creating the article!");
+        console.error("There was an error creating the article!", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleReturn = () => {
+    navigate("/Articles");
+  };
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 3,
+        width: "100%",
+        maxWidth: "500px",
+        mx: "auto",
+      }}
+    >
+      <TextField
+        label="Article Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        sx={{ marginBottom: 2, width: "100%" }}
+        required
+      />
+      <Button
+        variant="contained"
+        component="label"
+        sx={{ marginBottom: 2, width: "100%" }}
+      >
+        Upload Photo
+        <input type="file" hidden onChange={handlePhotoChange} />
+      </Button>
+
+      {photoPreview && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: 2,
+            width: "100%",
+          }}
+        >
+          <img
+            src={photoPreview}
+            alt="Selected"
+            style={{ maxWidth: "100%", maxHeight: "300px", marginBottom: 8 }}
+          />
+          <Typography variant="subtitle1">{photoName}</Typography>
+        </Box>
+      )}
+
+      <TextField
+        label="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        multiline
+        rows={4}
+        sx={{ marginBottom: 2, width: "100%" }}
+        required
+      />
+      {error && (
+        <Alert severity="error" sx={{ marginBottom: 2, width: "100%" }}>
+          {error}
+        </Alert>
+      )}
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        disabled={loading}
+        sx={{ width: "100%" }}
+      >
+        {loading ? <CircularProgress size={24} /> : "Create Article"}
+      </Button>
+      <Button variant="outlined" color="secondary" onClick={handleReturn}>
+        بازگشت
+      </Button>
+    </Box>
+  );
+}

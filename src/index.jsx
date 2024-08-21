@@ -7,6 +7,8 @@ import Category from "./Pages/menu/Category.jsx";
 import Products from "./Pages/menu/Products.jsx";
 import Articles from "./Pages/menu/Articles.jsx";
 import Users from "./Pages/menu/Users.jsx";
+import CreateCategory from "./Pages/menu/CreateCategory.jsx";
+import CreateArticle from "./Pages/menu/CreateArticle.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,6 +20,8 @@ root.render(
       <Route path="/Products" element={<Products />} />
       <Route path="/Articles" element={<Articles />} />
       <Route path="/Users" element={<Users />} />
+      <Route path="/CreateCategory" element={<CreateCategory />} />
+      <Route path="/CreateArticle" element={<CreateArticle />} />
     </Routes>
   </Router>
 );
