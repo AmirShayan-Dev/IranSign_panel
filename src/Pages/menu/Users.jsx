@@ -6,10 +6,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../apiInstance/api";
 
 export default function Users() {
   const drawerWidth = 250;
@@ -25,8 +25,11 @@ export default function Users() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8008/api/users");
-      setUsers(response.data);
+      const response = await api({
+        url: "http://localhost:8008/api/users",
+        method: "GET",
+      });
+      setUsers(response.data.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -34,7 +37,11 @@ export default function Users() {
 
   const createUser = async () => {
     try {
-      await axios.post("http://localhost:8008/api/users/register", newUser);
+      await api({
+        method: "POST",
+        url: "http://localhost:8008/api/users/register",
+        data: newUser,
+      });
       fetchUsers();
       setNewUser({ name: "", email: "" });
     } catch (error) {
@@ -44,10 +51,11 @@ export default function Users() {
 
   const updateUser = async () => {
     try {
-      await axios.put(
-        `http://localhost:8008/api/users/${selectedUser.id}`,
-        selectedUser
-      );
+      await api({
+        url: `http://localhost:8008/api/users/${selectedUser.id}`,
+        data: selectedUser,
+        method: "PUT",
+      });
       fetchUsers();
       setSelectedUser(null);
     } catch (error) {
@@ -57,6 +65,7 @@ export default function Users() {
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
+    setNewUser({ name: user.name, email: user.email });
   };
 
   const handleInputChange = (event) => {
@@ -71,12 +80,15 @@ export default function Users() {
   const goToCategory = () => {
     navigate("/Category");
   };
+
   const goToDashboard = () => {
     navigate("/Dashboard");
   };
+
   const goToProducts = () => {
     navigate("/Products");
   };
+
   const goToArticles = () => {
     navigate("/Articles");
   };
@@ -139,19 +151,21 @@ export default function Users() {
             name="name"
             value={selectedUser ? selectedUser.name : newUser.name}
             onChange={handleInputChange}
+            fullWidth
           />
           <TextField
             label="Email"
             name="email"
             value={selectedUser ? selectedUser.email : newUser.email}
             onChange={handleInputChange}
+            fullWidth
           />
           {selectedUser ? (
-            <Button variant="contained" onClick={updateUser}>
+            <Button variant="contained" onClick={updateUser} color="primary">
               Update User
             </Button>
           ) : (
-            <Button variant="contained" onClick={createUser}>
+            <Button variant="contained" onClick={createUser} color="primary">
               Create User
             </Button>
           )}

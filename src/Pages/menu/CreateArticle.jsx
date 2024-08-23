@@ -5,8 +5,8 @@ import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../apiInstance/api";
 
 export default function CreateArticle() {
   const [name, setName] = useState("");
@@ -29,8 +29,8 @@ export default function CreateArticle() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!photo) {
-      setError("Please upload a photo.");
+    if (!name || !photo || !description) {
+      setError("Please fill in all fields and upload a photo.");
       return;
     }
 
@@ -42,8 +42,11 @@ export default function CreateArticle() {
     formData.append("photo", photo);
     formData.append("description", description);
 
-    axios
-      .post("http://localhost:8008/api/create_articles", formData)
+    api({
+      url: "http://localhost:8008/api/create_articles",
+      method: "POST",
+      data: formData,
+    })
       .then(() => {
         navigate("/articles");
       })

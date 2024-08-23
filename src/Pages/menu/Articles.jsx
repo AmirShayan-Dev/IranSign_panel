@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -9,7 +9,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../../apiInstance/api";
 
 export default function Articles() {
   const drawerWidth = 250;
@@ -18,19 +18,28 @@ export default function Articles() {
 
   // Fetch articles on component mount
   React.useEffect(() => {
-    axios
-      .get("http://localhost:8008/api/articles")
+    api({
+      url: "http://localhost:8008/api/articles",
+      method: "GET",
+    })
       .then((response) => {
-        setArticles(response.data);
+        console.log("Articles fetched:", response.data); // Log the response data
+        // Check if the response data is an array
+        if (Array.isArray(response.data.data)) {
+          setArticles(response.data.data);
+        } else {
+          console.error("Unexpected response data format:", response.data);
+          setArticles([]); // Reset to an empty array if data format is not as expected
+        }
       })
       .catch((error) => {
         console.error("There was an error fetching the articles!", error);
+        setArticles([]); // Reset to an empty array in case of error
       });
   }, []);
 
   const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:8008/api/article/${id}`)
+    api({ method: "DELETE", url: `http://localhost:8008/api/article/${id}` })
       .then(() => {
         setArticles(articles.filter((article) => article.id !== id));
       })
@@ -99,36 +108,44 @@ export default function Articles() {
           Make a New Article
         </Button>
         <Grid container spacing={2}>
-          {articles.map((article) => (
-            <Grid item xs={12} sm={6} md={4} key={article.id}>
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  borderRadius: 2,
-                  padding: 2,
-                  textAlign: "center",
-                }}
-              >
-                <h2>{article.name}</h2>
-                <p>{article.description}</p>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => handleEdit(article.id)}
-                  sx={{ marginRight: 1 }}
+          {Array.isArray(articles) && articles.length > 0 ? (
+            articles.map((article) => (
+              <Grid item xs={12} sm={6} md={4} key={article.id}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                    padding: 2,
+                    textAlign: "center",
+                  }}
                 >
-                  Change
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleDelete(article.id)}
-                >
-                  Delete
-                </Button>
+                  <h2>{article.name}</h2>
+                  <p>{article.description}</p>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => handleEdit(article.id)}
+                    sx={{ marginRight: 1 }}
+                  >
+                    Change
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => handleDelete(article.id)}
+                  >
+                    Delete
+                  </Button>
+                </Box>
+              </Grid>
+            ))
+          ) : (
+            <Grid item xs={12}>
+              <Box sx={{ textAlign: "center", padding: 2 }}>
+                <p>No articles available</p>
               </Box>
             </Grid>
-          ))}
+          )}
         </Grid>
       </Box>
     </Box>

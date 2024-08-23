@@ -3,8 +3,8 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../apiInstance/api.jsx"; // Import the api function
 
 export default function CreateCategory() {
   const [name, setName] = useState("");
@@ -35,22 +35,19 @@ export default function CreateCategory() {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("image", image);
+    formData.append("file", image);
 
-    const token = localStorage.getItem(
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImZ1bGxOYW1lIjoidGVzdCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3MjQyNTM0ODIsImV4cCI6MTcyNDMzOTg4Mn0.8nyScfXExa2ri510EYUGffSqVKBtYStxiPnxPVa9ZAQ"
-    ); // Retrieve token from local storage or wherever you store it
-
-    axios
-      .post("http://localhost:8008/api/create-category", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      })
+    api({
+      url: "http://localhost:8008/api/create-category",
+      method: "POST",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => {
         console.log("Category created:", response.data);
-        navigate("/categories");
+        navigate("/Category"); // Redirect to the category list
       })
       .catch((error) => {
         console.error("Error creating category:", error);

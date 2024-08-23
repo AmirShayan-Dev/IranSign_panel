@@ -3,6 +3,7 @@ import "./Login.css";
 import { TextField, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { setDataToLocalStorage } from "../apiInstance/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -30,7 +31,8 @@ function Login() {
         }
       );
 
-      if (response.status === 200) {
+      if (response.data.status === "success") {
+        setDataToLocalStorage("userData", response.data.data, "local");
         navigate("/Dashboard");
       }
     } catch (err) {

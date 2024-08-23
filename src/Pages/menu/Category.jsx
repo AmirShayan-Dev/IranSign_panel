@@ -9,23 +9,32 @@ import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
-import axios from "axios";
+import { api } from "../../apiInstance/api.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function Category() {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]); // Initialize as an empty array
   const drawerWidth = 250;
   const navigate = useNavigate();
 
   // Fetch categories from the API
   const refreshCategories = () => {
-    axios
-      .get("http://localhost:8008/api/category")
+    api({
+      url: "http://localhost:8008/api/category",
+      method: "GET",
+    })
       .then((response) => {
-        setCategories(response.data);
+        console.log("Categories fetched:", response.data); // Log the response data
+        if (Array.isArray(response.data.data)) {
+          setCategories(response.data.data); // Ensure data is an array
+        } else {
+          console.error("Unexpected data format:", response.data);
+          setCategories([]); // Set to empty array if data is not as expected
+        }
       })
       .catch((error) => {
         console.error("Error fetching categories:", error);
+        setCategories([]); // Set to empty array on error
       });
   };
 
@@ -36,8 +45,10 @@ export default function Category() {
 
   // Delete a category
   const handleDeleteCategory = (id) => {
-    axios
-      .delete(`http://localhost:8008/api/delete-category/${id}`)
+    api({
+      url: `http://localhost:8008/api/delete-category/${id}`,
+      method: "DELETE",
+    })
       .then(() => {
         refreshCategories(); // Refresh the list after deletion
       })
@@ -96,23 +107,6 @@ export default function Category() {
               </ListItem>
             ))}
           </List>
-          {/* <List>
-            <ListItemButton onClick={() => navigate("/Dashboard")}>
-              <ListItemText primary="داشبورد" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemText primary="دسته بندی ها" />
-            </ListItemButton>
-            <ListItemButton onClick={() => navigate("/Products")}>
-              <ListItemText primary="محصولات" />
-            </ListItemButton>
-            <ListItemButton onClick={() => navigate("/Articles")}>
-              <ListItemText primary="مقالات" />
-            </ListItemButton>
-            <ListItemButton onClick={() => navigate("/Users")}>
-              <ListItemText primary="کاربران" />
-            </ListItemButton>
-          </List> */}
         </Box>
       </Drawer>
 
@@ -141,22 +135,28 @@ export default function Category() {
 
         {/* List of Categories */}
         <List>
-          {categories.map((category) => (
-            <ListItem
-              key={category.id}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDeleteCategory(category.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText primary={category.name} />
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <ListItem
+                key={category.id}
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDeleteCategory(category.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                }
+              >
+                <ListItemText primary={category.name} />
+              </ListItem>
+            ))
+          ) : (
+            <ListItem>
+              <ListItemText primary="No categories available" />
             </ListItem>
-          ))}
+          )}
         </List>
       </Box>
     </Box>
