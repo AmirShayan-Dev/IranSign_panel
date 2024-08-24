@@ -8,56 +8,57 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
 import { api } from "../../apiInstance/api.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function Category() {
-  const [categories, setCategories] = useState([]); // Initialize as an empty array
+  const [categories, setCategories] = useState([]);
   const drawerWidth = 250;
   const navigate = useNavigate();
 
-  // Fetch categories from the API
   const refreshCategories = () => {
     api({
       url: "http://localhost:8008/api/category",
       method: "GET",
     })
       .then((response) => {
-        console.log("Categories fetched:", response.data); // Log the response data
+        console.log("Categories fetched:", response.data);
         if (Array.isArray(response.data.data)) {
-          setCategories(response.data.data); // Ensure data is an array
+          setCategories(response.data.data);
         } else {
           console.error("Unexpected data format:", response.data);
-          setCategories([]); // Set to empty array if data is not as expected
+          setCategories([]);
         }
       })
       .catch((error) => {
         console.error("Error fetching categories:", error);
-        setCategories([]); // Set to empty array on error
+        setCategories([]);
       });
   };
 
-  // Fetch categories when component mounts
   useEffect(() => {
     refreshCategories();
   }, []);
 
-  // Delete a category
   const handleDeleteCategory = (id) => {
     api({
       url: `http://localhost:8008/api/delete-category/${id}`,
       method: "DELETE",
     })
       .then(() => {
-        refreshCategories(); // Refresh the list after deletion
+        refreshCategories();
       })
       .catch((error) => {
         console.error("Error deleting category:", error);
       });
   };
 
-  // Navigate to the CreateCategory page
+  const handleEditCategory = (id) => {
+    navigate(`/update-category/${id}`);
+  };
+
   const goToCreateCategory = () => {
     navigate("/CreateCategory");
   };
@@ -123,7 +124,6 @@ export default function Category() {
       >
         <h1 style={{ fontSize: "1.2rem" }}>لیست دسته بندی ها</h1>
 
-        {/* Create New Category Button */}
         <Button
           variant="contained"
           color="primary"
@@ -133,20 +133,29 @@ export default function Category() {
           ایجاد دسته بندی جدید
         </Button>
 
-        {/* List of Categories */}
         <List>
           {categories.length > 0 ? (
             categories.map((category) => (
               <ListItem
                 key={category.id}
                 secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDeleteCategory(category.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <>
+                    <IconButton
+                      edge="end"
+                      aria-label="edit"
+                      onClick={() => handleEditCategory(category.id)}
+                      sx={{ marginLeft: 1 }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
                 }
               >
                 <ListItemText primary={category.name} />

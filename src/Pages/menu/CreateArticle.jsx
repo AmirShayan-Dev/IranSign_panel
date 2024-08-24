@@ -6,7 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../apiInstance/api";
+import { api, getDataFromStorage } from "../../apiInstance/api.jsx";
 
 export default function CreateArticle() {
   const [name, setName] = useState("");
@@ -38,9 +38,11 @@ export default function CreateArticle() {
     setError("");
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("photo", photo);
-    formData.append("description", description);
+    const userId = JSON.parse(getDataFromStorage("userData", "local")).userId;
+    formData.append("userId", userId);
+    formData.append("title", name);
+    formData.append("content", description);
+    formData.append("file", photo);
 
     api({
       url: "http://localhost:8008/api/create_articles",
@@ -48,10 +50,10 @@ export default function CreateArticle() {
       data: formData,
     })
       .then(() => {
-        navigate("/articles");
+        navigate("/Articles");
       })
       .catch((error) => {
-        setError("There was an error creating the article!");
+        setError("There was an error creating the article!error");
         console.error("There was an error creating the article!", error);
       })
       .finally(() => {
@@ -84,6 +86,15 @@ export default function CreateArticle() {
         sx={{ marginBottom: 2, width: "100%" }}
         required
       />
+      <TextField
+        label="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        multiline
+        rows={4}
+        sx={{ marginBottom: 2, width: "100%" }}
+        required
+      />
       <Button
         variant="contained"
         component="label"
@@ -112,15 +123,6 @@ export default function CreateArticle() {
         </Box>
       )}
 
-      <TextField
-        label="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        multiline
-        rows={4}
-        sx={{ marginBottom: 2, width: "100%" }}
-        required
-      />
       {error && (
         <Alert severity="error" sx={{ marginBottom: 2, width: "100%" }}>
           {error}

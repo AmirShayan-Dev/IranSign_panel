@@ -11,8 +11,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../apiInstance/api.jsx"; // Import the apiInstance
+import { api } from "../../apiInstance/api.jsx";
 
 export default function Products() {
   const drawerWidth = 250;
@@ -20,26 +22,38 @@ export default function Products() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch products from the API
     api({
       url: "http://localhost:8008/api/products",
       method: "GET",
     })
       .then((response) => {
-        console.log("Products fetched:", response.data); // Log the response data
-        // Check if the response data is an array
         if (Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
           console.error("Unexpected response data format:", response.data);
-          setProducts([]); // Reset to an empty array if data format is not as expected
+          setProducts([]);
         }
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
-        setProducts([]); // Reset to an empty array in case of error
+        setProducts([]);
       });
   }, []);
+
+  const handleDeleteProduct = (id) => {
+    api({
+      url: `http://localhost:8008/api/product/${id}`,
+      method: "DELETE",
+    })
+      .then(() => {
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product.id !== id)
+        );
+      })
+      .catch((error) => {
+        console.error("Error deleting product:", error);
+      });
+  };
 
   const goToCategory = () => {
     navigate("/Category");
@@ -81,7 +95,7 @@ export default function Products() {
       >
         <Box sx={{ overflow: "auto" }}>
           <List>
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton onClick={item.action}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -92,35 +106,54 @@ export default function Products() {
           </List>
         </Box>
       </Drawer>
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          marginRight: drawerWidth,
+          marginRight: `${drawerWidth}px`,
           textAlign: "right",
+          width: `calc(100% - ${drawerWidth}px)`,
+          overflowX: "hidden",
         }}
       >
-        <h1 style={{ fontSize: "1rem" }}>محصولات</h1>
+        <h1 style={{ fontSize: "1.5rem", marginBottom: "20px" }}>محصولات</h1>
         <Button
           variant="contained"
           color="primary"
           onClick={goToCreateProduct}
-          sx={{ marginBottom: 2 }}
+          sx={{ marginBottom: 3 }}
         >
           ایجاد محصول جدید
         </Button>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 3,
+          }}
+        >
           {Array.isArray(products) ? (
             products.map((product, index) => (
-              <Card key={index} sx={{ maxWidth: 200 }}>
+              <Card
+                key={index}
+                sx={{
+                  width: "100%",
+                  height: "400px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  position: "relative",
+                }}
+              >
                 <CardMedia
                   component="img"
-                  height="140"
+                  sx={{ height: "250px", objectFit: "cover" }}
                   image={product.url}
                   alt={product.title}
                 />
-                <CardContent>
+                <CardContent sx={{ flexGrow: 1 }}>
                   <Typography gutterBottom variant="h6" component="div">
                     {product.title}
                   </Typography>
@@ -128,6 +161,18 @@ export default function Products() {
                     {product.category.name}
                   </Typography>
                 </CardContent>
+                <IconButton
+                  sx={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    backgroundColor: "rgba(255, 255, 255, 0.7)",
+                  }}
+                  onClick={() => handleDeleteProduct(product.id)}
+                  aria-label="delete"
+                >
+                  <DeleteIcon />
+                </IconButton>
               </Card>
             ))
           ) : (

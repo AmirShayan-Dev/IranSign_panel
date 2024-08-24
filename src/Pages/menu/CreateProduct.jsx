@@ -4,8 +4,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
-import { api, getDataFromStorage } from "../../apiInstance/api.jsx"; // Import the apiInstance
-
+import { api, getDataFromStorage } from "../../apiInstance/api.jsx"; 
 export default function CreateProduct() {
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
@@ -16,7 +15,7 @@ export default function CreateProduct() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch categories from the API
+  
     api({
       url: "http://localhost:8008/api/category",
       method: "GET",
@@ -33,7 +32,6 @@ export default function CreateProduct() {
     const file = event.target.files[0];
     setImage(file);
 
-    // Generate a preview of the selected image
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -56,7 +54,7 @@ export default function CreateProduct() {
       formData.append("file", image);
     }
 
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const token = localStorage.getItem("token");
 
     api({
       url: "http://localhost:8008/api/create_product",
@@ -64,7 +62,7 @@ export default function CreateProduct() {
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+        Authorization: `Bearer ${token}`, 
       },
     })
       .then((response) => {

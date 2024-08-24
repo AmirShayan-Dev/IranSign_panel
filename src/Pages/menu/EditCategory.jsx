@@ -1,17 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router-dom";
-import { api } from "../../apiInstance/api.jsx"; 
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../apiInstance/api.jsx";
 
-export default function CreateCategory() {
+export default function EditCategory() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  // Fetch category details for editing
+  useEffect(() => {
+    if (id) {
+      api({
+        url: `http://localhost:8008/api/category/${id}`,
+        method: "GET",
+      })
+        .then((response) => {
+          const category = response.data.data;
+          setName(category.name);
+          setDescription(category.description);
+          if (category.imageUrl) {
+            setImagePreview(category.imageUrl);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching category:", error);
+        });
+    }
+  }, [id]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -28,26 +50,26 @@ export default function CreateCategory() {
     }
   };
 
-  const handleCreateCategory = () => {
+  const handleUpdateCategory = () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
     if (image) formData.append("file", image);
 
     api({
-      url: "http://localhost:8008/api/create-category",
-      method: "POST",
+      url: `http://localhost:8008/api/update-category/${id}`,
+      method: "PUT",
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
       .then((response) => {
-        console.log("Category created:", response.data);
+        console.log("Category updated:", response.data);
         navigate("/Category");
       })
       .catch((error) => {
-        console.error("Error creating category:", error);
+        console.error("Error updating category:", error);
       });
   };
 
@@ -64,7 +86,7 @@ export default function CreateCategory() {
         mt: 4,
       }}
     >
-      <h1>ایجاد دسته بندی جدید</h1>
+      <h1>ویرایش دسته بندی</h1>
 
       <TextField
         label="نام دسته بندی"
@@ -112,10 +134,10 @@ export default function CreateCategory() {
       <Button
         variant="contained"
         color="primary"
-        onClick={handleCreateCategory}
+        onClick={handleUpdateCategory}
         sx={{ mb: 2 }}
       >
-        ایجاد
+        ذخیره تغییرات
       </Button>
 
       <Button variant="outlined" color="secondary" onClick={handleReturn}>

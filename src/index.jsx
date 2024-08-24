@@ -10,6 +10,8 @@ import Users from "./Pages/menu/Users.jsx";
 import CreateCategory from "./Pages/menu/CreateCategory.jsx";
 import CreateArticle from "./Pages/menu/CreateArticle.jsx";
 import CreateProduct from "./Pages/menu/CreateProduct.jsx";
+import EditCategory from "./Pages/menu/EditCategory.jsx";
+import CreateUser from "./Pages/menu/CreateUser.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,6 +26,8 @@ root.render(
       <Route path="/CreateCategory" element={<CreateCategory />} />
       <Route path="/CreateArticle" element={<CreateArticle />} />
       <Route path="/CreateProduct" element={<CreateProduct />} />
+      <Route path="/CreateUser" element={<CreateUser />} />
+      <Route path="/update-Category" element={<EditCategory />} />
     </Routes>
   </Router>
 );
